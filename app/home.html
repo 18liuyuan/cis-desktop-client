@@ -5,8 +5,22 @@
     <meta charset="UTF-8" />
 
     <link rel="stylesheet" href="css/frame.css" />
+    <script>
+        // 重命名 Electron 提供的 require
+        window.nodeRequire = require;
+        delete window.require;
+        delete window.exports;
+        delete window.module;
 
-    <title>主页</title>
+
+    </script>
+
+<script type="text/javascript" src="js/jquery/jquery-3.1.1.min.js"></script>
+
+
+<script type="text/javascript" src="js/home.js"></script>
+
+<title>主页</title>
 </head>
 
 <body>
@@ -15,21 +29,72 @@
             <a>首页</a>
         </div>
         <div class="cis-title-right">
-            <div class="cis-title-action">
-                <image src="img/max.png"></image>
-            </div>
-            <div class="cis-title-action">
+            <div id="win-min" class="cis-title-action">
                 <image src="img/min.png"></image>
             </div>
 
-            <div class="cis-title-action">
+            <div id="win-max" class="cis-title-action">
+                <image src="img/max.png"></image>
+            </div>
+
+
+            <div id="win-close" class="cis-title-action">
                 <image src="img/close.png"></image>
             </div>
         </div>
 
 
     </div>
-    <h1>Hello World!</h1>
+    <div>
+
+        <button id="btn-test" type="button">测试</button>
+        <div>
+
+
+    <object type='application/x-vlc-plugin' pluginspage="http://www.videolan.org/" id='vlc' events='false' width="500" height="300">
+    <param name='mrl' value='rtsp://admin:admin@192.168.1.22:554/cam/realmonitor?channel=1&subtype=0' />
+    <param name='volume' value='50' />
+    <param name='autoplay' value='true' />
+    <param name='loop' value='false' />
+    <param name='fullscreen' value='false' />
+    <param name='controls' value='false' />
+
+</object>
+
+    <object type='application/x-vlc-plugin' pluginspage="http://www.videolan.org/" id='vlc' events='false' width="500" height="300">
+    <param name='mrl' value='rtsp://admin:admin@192.168.1.22:554/cam/realmonitor?channel=1&subtype=0' />
+    <param name='volume' value='50' />
+    <param name='autoplay' value='true' />
+    <param name='loop' value='false' />
+    <param name='fullscreen' value='false' />
+    <param name='controls' value='false' />
+
+</object>
+
+    <object type='application/x-vlc-plugin' pluginspage="http://www.videolan.org/" id='vlc' events='false' width="500" height="300">
+    <param name='mrl' value='rtsp://admin:admin@192.168.1.22:554/cam/realmonitor?channel=1&subtype=0' />
+    <param name='volume' value='50' />
+    <param name='autoplay' value='true' />
+    <param name='loop' value='false' />
+    <param name='fullscreen' value='false' />
+    <param name='controls' value='false' />
+
+</object>
+
+    <object type='application/x-vlc-plugin' pluginspage="http://www.videolan.org/" id='vlc' events='false' width="500" height="300">
+    <param name='mrl' value='rtsp://admin:admin@192.168.1.22:554/cam/realmonitor?channel=1&subtype=0' />
+    <param name='volume' value='50' />
+    <param name='autoplay' value='true' />
+    <param name='loop' value='false' />
+    <param name='fullscreen' value='false' />
+    <param name='controls' value='false' />
+
+</object>
+
+
+
+        </div>
+    </div>
 </body>
 
 
