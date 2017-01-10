@@ -1,0 +1,10 @@
+{
+    targets : [
+        {
+            "target_name" : "dhvideo",
+            "sources" : ["main.cc"]
+        }
+
+    ]
+
+}
