@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+    <head lang="en">
+    <meta charset="UTF-8" />
+
+    <link rel="stylesheet" href="css/frame.css" />
+    <script>
+        // 重命名 Electron 提供的 require
+        window.nodeRequire = require;
+        delete window.require;
+        delete window.exports;
+        delete window.module;
+
+    </script>
+
+<script type="text/javascript" src="js/jquery/jquery-3.1.1.min.js"></script>
+
+<script type="text/javascript" src="js/setting.js"></script>
+
+<title>设置</title>
+</head>
+
+<body>
+  
+    <div>
+        <button id="btn-test" type="button">测试</button>
+    </div>
+</body>
+
+</html>

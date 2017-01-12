@@ -18,7 +18,7 @@ $(document).ready(function () {
          ipcRenderer.send('win-close',"aaa");
     });
 
-    $("#btn-test").click((e) => {
-        ipcRenderer.send('open-page',"video");
+    $("#btn-play").click((e) => {
+        ipcRenderer.send('video-play',"1");
     });
 });
