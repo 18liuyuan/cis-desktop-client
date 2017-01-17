@@ -21,4 +21,8 @@ $(document).ready(function () {
     $("#btn-play").click((e) => {
         ipcRenderer.send('video-play',"1");
     });
+
+    var vlc = document.getElementById("vlc");
+    vlc.audio.toggleMute();
+
 });

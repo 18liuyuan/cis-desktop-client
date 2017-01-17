@@ -1,0 +1,6 @@
+prefix=${APPDATA}\npm
+disturl=http://atom.io/download/atom-shell
+target=1.4.14
+arch=ia32
+runtime=electron
+registry=https://registry.npm.taobao.org

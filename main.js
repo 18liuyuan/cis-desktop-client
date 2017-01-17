@@ -1,8 +1,38 @@
 'use strict';
 console.log(process.version);
-const addon = require('./libs/dhvideo/build/Debug/addon.node');
+const dhsdk = require('./libs/dhsdk/build/Release/dhsdk.node');
 
-console.log(addon.hello());
+//console.log(addon.hello());
+// dhsdk.hello(function(msg){
+//     console.log(msg);
+// });
+
+var a = new dhsdk.CSdkObject();
+
+a.setLogCallback(function(msg){
+    console.log(`c++ log : ${msg}`);
+});
+
+console.log(`init age = ${a.getAge()}`);
+
+a.setAge(125);
+console.log(`after set age = ${a.getAge()}`);
+
+var ret = a.login("192.168.2.89", 37777, "admin", "admin");
+console.log(`login dev return ${ret}`);
+if(ret != 0){
+    var c = a.realStream(0, function(data1, data2){
+
+    });
+    console.log(`realstream handle = ${c}`);
+}
+
+ console.log("after realstream");
+// var a = dhsdk.newPlayer();
+//  console.log(a);
+               
+//  var b = dhsdk.deletePlayer();
+//  console.log(b);
 
 const {app} = require('electron');
 const {ipcMain} = require('electron');
@@ -19,10 +49,10 @@ ipcMain.on('win-max', function(e, arg){
     
     if(mainWindow.isMaximized()){
         mainWindow.unmaximize();
-           mainWindow.webContents.closeDevTools();         
+         //  mainWindow.webContents.closeDevTools();         
     } else {
         mainWindow.maximize();
-         mainWindow.webContents.openDevTools();
+        // mainWindow.webContents.openDevTools();
     }
     //e.sender.send('on-win-max', 'win max received.');
 });
@@ -58,7 +88,7 @@ ipcMain.on('video-play', function(e, arg){
 
 ipcMain.on('win-close', function(e, arg){
     console.log(arg);
-   // app.exit();
+    app.exit();
    // e.sender.send('on-win-max', 'win max received.');
 });
 

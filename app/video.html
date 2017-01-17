@@ -3,7 +3,7 @@
 
 <head lang="en">
     <meta charset="UTF-8" />
-
+    
     <link rel="stylesheet" href="css/frame.css" />
     <script>
         // 重命名 Electron 提供的 require
@@ -20,13 +20,13 @@
 
 <script type="text/javascript" src="js/video.js"></script>
 
-<title>主页</title>
+<title>视频</title>
 </head>
 
 <body>
     <div class="cis-title-bar">
         <div class="cis-title-center">
-            <a>首页</a>
+            <a>视频</a>
         </div>
         <div class="cis-title-right">
             <div id="win-min" class="cis-title-action">
@@ -48,7 +48,10 @@
         <button id="btn-play" type="button">播放</button>
     </div>
 
-
+    <embed type="application/x-vlc-plugin" pluginspage="http://www.videolan.org"
+       width="640"
+       height="480"
+       id="vlc" />
 
 </body>
 
