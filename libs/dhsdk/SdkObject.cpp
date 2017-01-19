@@ -1,5 +1,5 @@
 #include "SdkObject.h"
-
+#include  <iostream>
 using v8::Context;
 using v8::Function;
 using v8::FunctionCallbackInfo;
@@ -21,11 +21,12 @@ CSdkObject::CSdkObject()
      mAge = 1;
      if(!g_initLib){
        boolean b = CLIENT_Init(NULL,NULL);
-       printf("%d",b);
+      // printf("%d",b);
        g_initLib = true;
      }
       mLoginHandle = 0;
      mStreamHandle = 0;
+    
     
 }
 
@@ -140,25 +141,35 @@ void CSdkObject::login(const v8::FunctionCallbackInfo<v8::Value>& args){
     return ;
   }
 
+ //boolean b = CLIENT_Init(NULL,NULL);
+ // CLIENT_Cleanup();
+ // obj->outLog(args, String::NewFromUtf8(isolate, "CLIENT_Init="));
+//   obj->outLog(args, Number::New(isolate, b));
+
 int err=0;
   NET_DEVICEINFO devInfo ;
-  obj->mLoginHandle = CLIENT_Login("192.168.2.89",37777, "admin", "admin", &devInfo, &err );
+  memset(&devInfo,0,sizeof(NET_DEVICEINFO));
+  obj->mLoginHandle = CLIENT_LoginEx("192.168.6.52",37777, "admin", "admin", 0, NULL, &devInfo, &err );
    
 
-  if(obj->mLoginHandle  == 0){
+  if(obj->mLoginHandle == 0){
     obj->outLog(args, String::NewFromUtf8(isolate, "login result failure"));
   } else {
      obj->outLog(args, String::NewFromUtf8(isolate, "login result success"));
+     int num = devInfo.byChanNum;
+     obj->outLog(args, Number::New(isolate, num));
   }
   
   args.GetReturnValue().Set(Number::New(isolate, obj->mLoginHandle));
 
 }
 
+
 /*
 登出
 */
 void CSdkObject::logout(const v8::FunctionCallbackInfo<v8::Value>& args){
+
      Isolate* isolate = args.GetIsolate();
     CSdkObject* obj = ObjectWrap::Unwrap<CSdkObject>(args.Holder());
     CLIENT_Logout(obj->mLoginHandle);
@@ -166,17 +177,65 @@ void CSdkObject::logout(const v8::FunctionCallbackInfo<v8::Value>& args){
 }
 
  void CSdkObject::fRealStreamCallBack(LLONG lRealHandle, DWORD dwDataType, BYTE *pBuffer,DWORD dwBufSize,LONG param, LDWORD dwUser){
+      CSdkObject* obj = (CSdkObject*)dwUser;
+    Isolate* isolate = Isolate::GetCurrent();
+ std::cout << "a0"<< std::endl; 
+  //  v8::Handle<v8::Value> v = Number::New(v8::Null(), obj->mAge);
+  obj->mAge ++;
+//	HandleScope scope(isolate);
 
+ //     char log[128] = {0};
+  //   sprintf(log,"get stream data, len=%d", dwBufSize);
+//std::cout << log<< std::endl; 
+ //   CSdkObject* obj = (CSdkObject*)dwUser;
+
+    std::cout << "a1 age="<< obj->mAge << std::endl; 
+   
+    //Context::GetCurrent()->Global();
+   const unsigned argc = 1;
+      // Local<Value> argv[argc] = { String::NewFromUtf8(isolate, "hello world")};
+    //  Locker locker(obj->m_pIsolate);
+    //  Isolate* curIsolate = Isolate::GetCurrent();
+
+    //  if(obj->m_pIsolate != NULL){
+    //     std::cout << "isolate begin:" <<obj->m_pIsolate << std::endl; 
+    //     Local<Value> value = String::NewFromUtf8(curIsolate, log);
+    //      std::cout << "isolate end" <<obj->m_pIsolate << std::endl; 
+    //  }
+	  
+	   // Local<Value> argv[argc] = { String::NewFromUtf8(isolate, "hello world")};
+	   
+	  // Local<Function>::New(obj->m_pIsolate, obj->mfLogCallback)->Call(obj->m_pIsolate->GetCurrentContext()->Global(), argc, argv);
+
+    // v8::FunctionCallbackInfo<v8::Value> args =  obj->m_Args;
+    // Isolate* isolate = m_Args.GetIsolate();
+     // CSdkObject* obj = ObjectWrap::Unwrap<CSdkObject>(pArgs->Holder());
+
+
+    // char log[128] = {0};
+    //  sprintf(log,"get stream data, len=%d", dwBufSize);
+
+  //   obj->outLog(*pArgs, String::NewFromUtf8(isolate, log));
  }
+
+
+ void CSdkObject::onCallback(uv_async_t* handle, int status) {
+
+	 const unsigned argc = 1;
+	  Local<Value> argv[argc] = { String::NewFromUtf8(m_pIsolate, "hello world")};
+	  Local<Function>::New(m_pIsolate, mfLogCallback)->Call(m_pIsolate->GetCurrentContext()->Global(), argc, argv);
+ }
+
 
 /*
 开始实时流,参数1通道号，参数2数据回调
 */
 void CSdkObject::realStream(const v8::FunctionCallbackInfo<v8::Value>& args){
+
      Isolate* isolate = args.GetIsolate();
      CSdkObject* obj = ObjectWrap::Unwrap<CSdkObject>(args.Holder());
 
-  obj->outLog(args, String::NewFromUtf8(isolate, "realstream start"));
+    obj->outLog(args, String::NewFromUtf8(isolate, "realstream start"));
 
      if(args.Length() < 2){
        obj->outLog(args, String::NewFromUtf8(isolate, "realstream param too less"));
@@ -198,10 +257,15 @@ void CSdkObject::realStream(const v8::FunctionCallbackInfo<v8::Value>& args){
 
  // obj->outLog(args, String::NewFromUtf8(isolate, "realstream start 2"));
 
-     obj->mStreamHandle =  CLIENT_RealPlay(obj->mLoginHandle, channel, NULL);
+
+    HWND hWnd = NULL;
+     obj->mStreamHandle =  CLIENT_RealPlayEx(obj->mLoginHandle, 0, hWnd, DH_RType_Realplay);
+    // obj->mStreamHandle =CLIENT_StartRealPlay(obj->mLoginHandle, 0, hWnd,DH_RType_Realplay ,fRealStreamCallBack,NULL,NULL);
       // obj->outLog(args, String::NewFromUtf8(isolate, "realstream start 3"));
-     if(obj->mStreamHandle != 0){
-       CLIENT_SetRealDataCallBackEx(obj->mStreamHandle,fRealStreamCallBack,(DWORD)obj,0x00000001);
+     if(obj->mStreamHandle != 0){ 
+       obj->m_pIsolate = isolate;
+	   uv_async_init(uv_default_loop(), &(obj->s_async), onCallback);
+       CLIENT_SetRealDataCallBackEx(obj->mStreamHandle,fRealStreamCallBack,(DWORD)&obj,0x00000001);
         obj->outLog(args, String::NewFromUtf8(isolate, "realstream success"));
      } else {
        DWORD dwErr = CLIENT_GetLastError();

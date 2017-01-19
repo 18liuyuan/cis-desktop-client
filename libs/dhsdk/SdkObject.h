@@ -3,6 +3,7 @@
 #include <node.h>
 #include <node_object_wrap.h>
 #include "inc/dhnetsdk.h"
+#include <uv.h>
 
 using namespace node;
 using namespace v8;
@@ -39,10 +40,15 @@ private:
     long mLoginHandle;
     long mStreamHandle;
     Persistent<Function> mfLogCallback;
+public:
+   Isolate* m_pIsolate;
+   v8::Persistent<v8::Context> m_CallbackContext;
+   uv_async_t s_async = { 0 };
 private:
     void outLog(v8::FunctionCallbackInfo<v8::Value> args, Local<Value> value);
 private:
     static void __stdcall fRealStreamCallBack(LLONG lRealHandle, DWORD dwDataType, BYTE *pBuffer,DWORD dwBufSize,LONG param, LDWORD dwUser);
-    
+public:
+	void onCallback(uv_async_t* handle, int status);
 };
 

@@ -7,27 +7,7 @@ const dhsdk = require('./libs/dhsdk/build/Release/dhsdk.node');
 //     console.log(msg);
 // });
 
-var a = new dhsdk.CSdkObject();
 
-a.setLogCallback(function(msg){
-    console.log(`c++ log : ${msg}`);
-});
-
-console.log(`init age = ${a.getAge()}`);
-
-a.setAge(125);
-console.log(`after set age = ${a.getAge()}`);
-
-var ret = a.login("192.168.2.89", 37777, "admin", "admin");
-console.log(`login dev return ${ret}`);
-if(ret != 0){
-    var c = a.realStream(0, function(data1, data2){
-
-    });
-    console.log(`realstream handle = ${c}`);
-}
-
- console.log("after realstream");
 // var a = dhsdk.newPlayer();
 //  console.log(a);
                
@@ -80,7 +60,27 @@ ipcMain.on('open-page', function(e, arg){
 
 ipcMain.on('video-play', function(e, arg){
 
-   // console.log(dhvideo.hello());
+        var a = new dhsdk.CSdkObject();
+
+        a.setLogCallback(function(msg){
+            console.log(`c++ log : ${msg}`);
+        });
+
+        console.log(`init age = ${a.getAge()}`);
+
+        a.setAge(125);
+        console.log(`after set age = ${a.getAge()}`);
+
+        var ret = a.login("192.168.5.38", 37777, "admin", "admin");
+        console.log(`login dev return ${ret}`);
+        if(ret != 0){
+            var c = a.realStream(0, function(data1, data2){
+
+            });
+            console.log(`realstream handle = ${c}`);
+        }
+
+        console.log("after realstream");
 
 });
 
@@ -104,8 +104,8 @@ app.on('ready', function () {
     
     //mainWindow.loadURL(`file://${__dirname}/app/home.html`);
 
-    mainWindow.loadURL(`file://${__dirname}/app/home.html`);
-    mainWindow.webContents.openDevTools();
+    mainWindow.loadURL(`file://${__dirname}/app/video.html`);
+   // mainWindow.webContents.openDevTools();
 
 });
 
