@@ -1,5 +1,7 @@
 #include "SdkObject.h"
 #include  <iostream>
+#include <uv.h>
+
 using v8::Context;
 using v8::Function;
 using v8::FunctionCallbackInfo;
@@ -178,10 +180,11 @@ void CSdkObject::logout(const v8::FunctionCallbackInfo<v8::Value>& args){
 
  void CSdkObject::fRealStreamCallBack(LLONG lRealHandle, DWORD dwDataType, BYTE *pBuffer,DWORD dwBufSize,LONG param, LDWORD dwUser){
       CSdkObject* obj = (CSdkObject*)dwUser;
-    Isolate* isolate = Isolate::GetCurrent();
- std::cout << "a0"<< std::endl; 
+   // Isolate* isolate = Isolate::GetCurrent();
+	obj->mAge = obj->mAge+1;
+	std::cout << "age="<<obj->mAge<<";handle="<<obj->mLoginHandle<< std::endl; 
   //  v8::Handle<v8::Value> v = Number::New(v8::Null(), obj->mAge);
-  obj->mAge ++;
+  
 //	HandleScope scope(isolate);
 
  //     char log[128] = {0};
@@ -189,10 +192,10 @@ void CSdkObject::logout(const v8::FunctionCallbackInfo<v8::Value>& args){
 //std::cout << log<< std::endl; 
  //   CSdkObject* obj = (CSdkObject*)dwUser;
 
-    std::cout << "a1 age="<< obj->mAge << std::endl; 
-   
+    //std::cout << "a1 age="<< obj->mAge << std::endl; 
+ // uv_async_send(&obj->async);
     //Context::GetCurrent()->Global();
-   const unsigned argc = 1;
+  // const unsigned argc = 1;
       // Local<Value> argv[argc] = { String::NewFromUtf8(isolate, "hello world")};
     //  Locker locker(obj->m_pIsolate);
     //  Isolate* curIsolate = Isolate::GetCurrent();
@@ -219,13 +222,17 @@ void CSdkObject::logout(const v8::FunctionCallbackInfo<v8::Value>& args){
  }
 
 
- void CSdkObject::onCallback(uv_async_t* handle, int status) {
+ //void CSdkObject::onCallback(uv_async_t* handle) {
+	// /*
+	//  const unsigned argc = 1;
+	//   Local<Value> argv[argc] = { String::NewFromUtf8(m_pIsolate, "hello world")};
+	//   Local<Function>::New(m_pIsolate, mfLogCallback)->Call(m_pIsolate->GetCurrentContext()->Global(), argc, argv);
+	//   */
+ //}
 
-	 const unsigned argc = 1;
-	  Local<Value> argv[argc] = { String::NewFromUtf8(m_pIsolate, "hello world")};
-	  Local<Function>::New(m_pIsolate, mfLogCallback)->Call(m_pIsolate->GetCurrentContext()->Global(), argc, argv);
- }
-
+ //void fStreamCallback(uv_async_t* handle) {
+	// std::cout << "out put stream in callback ." << std::endl;
+ //}
 
 /*
 开始实时流,参数1通道号，参数2数据回调
@@ -264,7 +271,7 @@ void CSdkObject::realStream(const v8::FunctionCallbackInfo<v8::Value>& args){
       // obj->outLog(args, String::NewFromUtf8(isolate, "realstream start 3"));
      if(obj->mStreamHandle != 0){ 
        obj->m_pIsolate = isolate;
-	   uv_async_init(uv_default_loop(), &(obj->s_async), onCallback);
+	//   uv_async_init(uv_default_loop(), &(obj->s_async), fStreamCallback);
        CLIENT_SetRealDataCallBackEx(obj->mStreamHandle,fRealStreamCallBack,(DWORD)&obj,0x00000001);
         obj->outLog(args, String::NewFromUtf8(isolate, "realstream success"));
      } else {
@@ -309,3 +316,34 @@ void CSdkObject::stopStream(const v8::FunctionCallbackInfo<v8::Value>& args){
        Local<Value> argv[argc] = {value};
        Local<Function>::New(isolate, obj->mfLogCallback)->Call(isolate->GetCurrentContext()->Global(), argc, argv);
  }
+
+
+void AsyncTaskBuffer(uv_work_t * work) {
+	 CSdkObject* pObject = (CSdkObject*)work->data;
+ }
+
+void AfterTaskBuffer(uv_work_t * work, int status) {
+	 CSdkObject* pObject = (CSdkObject*)work->data;
+	 const int argc = 1;
+	 Local<Value> argv[argc] = { String::NewFromUtf8(pObject->m_pIsolate, "completed task buffer")};
+	 Local<Function>::New(pObject->m_pIsolate, pObject->mfLogCallback)->Call(pObject->m_pIsolate->GetCurrentContext()->Global(), argc, argv);
+ }
+
+
+ void process(uv_async_t* handle) {
+
+ }
+void CSdkObject::startListenStreamThread() {
+
+    uv_loop_t* loop = uv_default_loop();
+	uv_async_t async_t;
+    uv_work_t req;
+	req.data = this;
+
+    uv_async_init(loop, &async_t, process);
+    uv_queue_work(loop, &req, AsyncTaskBuffer, AfterTaskBuffer);
+
+}
+
+
+

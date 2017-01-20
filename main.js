@@ -68,8 +68,8 @@ ipcMain.on('video-play', function(e, arg){
 
         console.log(`init age = ${a.getAge()}`);
 
-        a.setAge(125);
-        console.log(`after set age = ${a.getAge()}`);
+        //a.setAge(125);
+        //console.log(`after set age = ${a.getAge()}`);
 
         var ret = a.login("192.168.5.38", 37777, "admin", "admin");
         console.log(`login dev return ${ret}`);
